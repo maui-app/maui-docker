@@ -1,0 +1,69 @@
+version: '3'
+services:
+  webserver:
+    container_name: webserver
+    build:
+      context: ./nginx
+    ports:
+      - "80:80"
+    networks:
+      - mauinet
+    depends_on:
+      - mauidb
+      - mauibot
+      - mauiapi
+      - mauiapp
+    volumes:
+      - ./mauiapi:/var/www/vhosts/mauiapi
+      - ./mauiapp:/var/www/vhosts/mauiapp
+  mauidb:
+    container_name: mauidb
+    image: mysql
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "4306:3306"
+    environment:
+      - "MYSQL_DATABASE=mauidb"
+      - "MYSQL_USER=maui_user"
+      - "MYSQL_PASSWORD=maui_pass"
+      - "MYSQL_ROOT_PASSWORD=maui_pass"
+    networks:
+      - mauinet
+    volumes:
+      - ./mauidb:/var/lib/mysql
+  mauibot:
+    container_name: mauibot
+    build:
+      context: ./mauibot
+    networks:
+      - mauinet
+    depends_on:
+      - mauiapi
+    volumes:
+      - ./mauibot:/mauibot
+  mauiapi:
+    container_name: mauiapi
+    build:
+      context: ./mauiapi
+    ports:
+      - "9000:9000"
+    networks:
+      - mauinet
+    volumes:
+      - ./mauiapi:/var/www/html
+      - /var/www/html/vendor
+  mauiapp:
+    container_name: mauiapp
+    build:
+      context: ./mauiapp
+    networks:
+      - mauinet
+    depends_on:
+      - mauiapi
+    volumes:
+      - ./mauiapp:/app
+      - /app/node_modules
+networks:
+  mauinet:
+    driver: bridge
