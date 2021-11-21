@@ -1,0 +1,4 @@
+# Maui DNS entries
+127.0.0.1       maui.com
+127.0.0.1       api.maui.com
+# End - Maui DNS entries
