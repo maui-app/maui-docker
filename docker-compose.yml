@@ -6,16 +6,20 @@ services:
       context: ./nginx
     ports:
       - "80:80"
+      - "443:443"
     networks:
       - mauinet
     depends_on:
       - mauidb
-      - mauibot
       - mauiapi
       - mauiapp
     volumes:
       - ./mauiapi:/var/www/vhosts/mauiapi
       - ./mauiapp:/var/www/vhosts/mauiapp
+      - ./certbot:/var/www/certbot
+      - ./certbot-etc:/etc/letsencrypt
+      - ./certbot-var:/var/lib/letsencrypt
+      - ./dhparam:/etc/ssl/certs
   mauidb:
     container_name: mauidb
     image: mysql
@@ -32,16 +36,16 @@ services:
       - mauinet
     volumes:
       - ./mauidb:/var/lib/mysql
-  mauibot:
-    container_name: mauibot
-    build:
-      context: ./mauibot
-    networks:
-      - mauinet
-    depends_on:
-      - mauiapi
-    volumes:
-      - ./mauibot:/mauibot
+  # mauibot:
+  #   container_name: mauibot
+  #   build:
+  #     context: ./mauibot
+  #   networks:
+  #     - mauinet
+  #   depends_on:
+  #     - mauiapi
+  #   volumes:
+  #     - ./mauibot:/mauibot
   mauiapi:
     container_name: mauiapi
     build:
@@ -64,6 +68,18 @@ services:
     volumes:
       - ./mauiapp:/app
       - /app/node_modules
+  # certbot:
+  #   image: certbot/certbot
+  #   container_name: certbot
+  #   volumes:
+  #     - ./certbot:/var/www/certbot
+  #     - ./certbot-etc:/etc/letsencrypt
+  #     - ./certbot-var:/var/lib/letsencrypt
+  #   depends_on:
+  #     - webserver
+  #   networks:
+  #     - mauinet
+  #   command: certonly --webroot --webroot-path=/var/www/certbot --email olamileke.dev@gmail.com --agree-tos --no-eff-email --force-renewal -d mauii.app -d www.mauii.app -d api.mauii.app -d bot.mauii.app
 networks:
   mauinet:
     driver: bridge

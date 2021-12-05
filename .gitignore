@@ -4,3 +4,7 @@
 /mauiapp
 /mauidb
 /mauibot
+
+# SSL Folders
+/certbot*
+/dhparam
