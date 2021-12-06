@@ -36,16 +36,16 @@ services:
       - mauinet
     volumes:
       - ./mauidb:/var/lib/mysql
-  # mauibot:
-  #   container_name: mauibot
-  #   build:
-  #     context: ./mauibot
-  #   networks:
-  #     - mauinet
-  #   depends_on:
-  #     - mauiapi
-  #   volumes:
-  #     - ./mauibot:/mauibot
+  mauibot:
+    container_name: mauibot
+    build:
+      context: ./mauibot
+    networks:
+      - mauinet
+    depends_on:
+      - mauiapi
+    volumes:
+      - ./mauibot:/mauibot
   mauiapi:
     container_name: mauiapi
     build:
