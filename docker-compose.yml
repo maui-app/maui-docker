@@ -50,8 +50,6 @@ services:
     container_name: mauiapi
     build:
       context: ./mauiapi
-    ports:
-      - "9000:9000"
     networks:
       - mauinet
     volumes:
