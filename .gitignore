@@ -7,4 +7,5 @@
 
 # SSL Folders
 /certbot*
+/credentials
 /dhparam

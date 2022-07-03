@@ -11,12 +11,11 @@ services:
       - mauinet
     depends_on:
       - mauidb
-      - mauiapi
       - mauiapp
+      - mauiapi
     volumes:
       - ./mauiapi:/var/www/vhosts/mauiapi
       - ./mauiapp:/var/www/vhosts/mauiapp
-      - ./certbot:/var/www/certbot
       - ./certbot-etc:/etc/letsencrypt
       - ./certbot-var:/var/lib/letsencrypt
       - ./dhparam:/etc/ssl/certs
@@ -59,6 +58,7 @@ services:
     container_name: mauiapp
     build:
       context: ./mauiapp
+      dockerfile: Dockerfile.dev
     networks:
       - mauinet
     depends_on:
@@ -66,18 +66,18 @@ services:
     volumes:
       - ./mauiapp:/app
       - /app/node_modules
-  # certbot:
-  #   image: certbot/certbot
-  #   container_name: certbot
-  #   volumes:
-  #     - ./certbot:/var/www/certbot
-  #     - ./certbot-etc:/etc/letsencrypt
-  #     - ./certbot-var:/var/lib/letsencrypt
-  #   depends_on:
-  #     - webserver
-  #   networks:
-  #     - mauinet
-  #   command: certonly --webroot --webroot-path=/var/www/certbot --email olamileke.dev@gmail.com --agree-tos --no-eff-email --force-renewal -d mauii.app -d www.mauii.app -d api.mauii.app -d bot.mauii.app
+  certbot:
+    image: certbot/dns-digitalocean
+    container_name: certbot
+    volumes:
+      - ./credentials:/credentials
+      - ./certbot-etc:/etc/letsencrypt
+      - ./certbot-var:/var/lib/letsencrypt
+    depends_on:
+      - webserver
+    networks:
+      - mauinet
+    command: sleep 5
 networks:
   mauinet:
     driver: bridge
